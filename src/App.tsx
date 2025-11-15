@@ -1,3 +1,5 @@
+import { NewsList } from './components/NewsList';
+
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -11,8 +13,10 @@ function App() {
           </p>
         </div>
       </header>
+      <main>
+        <NewsList />
+      </main>
     </div>
   );
 }
-
 export default App;
