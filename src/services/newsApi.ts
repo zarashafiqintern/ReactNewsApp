@@ -8,7 +8,9 @@ export const fetchNews = async (query: string = 'technology'): Promise<NewsRespo
     `${BASE_URL}?q=${query}&apiKey=${NEWS_API_KEY}&sortBy=publishedAt&pageSize=20`
   );
   
-  if (!response.ok) throw new Error('Failed to fetch news');
+  if (!response.ok) {
+    throw new Error(`NewsAPI Error: ${response.status} - ${response.statusText}`);
+  }
   
   const data: NewsAPIResponse = await response.json();
   
@@ -16,17 +18,18 @@ export const fetchNews = async (query: string = 'technology'): Promise<NewsRespo
     status: data.status,
     response: {
       docs: data.articles.map((article, index) => ({
-        _id: `${index}-${Date.now()}`,
+        _id: `newsapi-${index}-${Date.now()}`,
         headline: {
           main: article.title,
         },
-        abstract: article.description || '',
+        abstract: article.description || 'No description available',
         web_url: article.url,
         pub_date: article.publishedAt,
         source: article.source.name,
         multimedia: article.urlToImage
           ? [{ url: article.urlToImage }]
           : undefined,
+        byline: article.author || undefined,
       })),
     },
   };

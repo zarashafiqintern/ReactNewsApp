@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Article } from '../types/news';
+import { PLACEHOLDER_IMAGE_LARGE } from '../constants/images';
 
 const NewsDetailPage = () => {
   const location = useLocation();
@@ -13,7 +14,7 @@ const NewsDetailPage = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Article not found</h2>
           <button
             onClick={() => navigate('/')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Go Back Home
           </button>
@@ -22,46 +23,45 @@ const NewsDetailPage = () => {
     );
   }
 
-  const imageUrl = article.multimedia?.[0]?.url || 'https://via.placeholder.com/1200x600?text=No+Image';
+  const imageUrl = article.multimedia?.[0]?.url || PLACEHOLDER_IMAGE_LARGE;
+  const bylineText = Array.isArray(article.byline) 
+    ? article.byline.join(', ') 
+    : article.byline;
 
   return (
     <div className="min-h-screen bg-gray-50">
-    
-      <header className="bg-white shadow-sm">
+       <header className="bg-white shadow-sm z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+            className="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors"
           >
             ← Back to News
           </button>
         </div>
       </header>
 
-    
       <main className="max-w-4xl mx-auto px-4 py-8">
         <article className="bg-white rounded-lg shadow-lg overflow-hidden">
-       
           <div className="w-full h-96 overflow-hidden bg-gray-200">
             <img
               src={imageUrl}
               alt={article.headline.main}
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/1200x600?text=No+Image';
+                (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE_LARGE;
               }}
             />
           </div>
 
           <div className="p-8">
-        
             <div className="mb-4">
               <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
                 {article.source || 'News Source'}
               </span>
             </div>
 
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
               {article.headline.main}
             </h1>
 
@@ -77,12 +77,12 @@ const NewsDetailPage = () => {
                 })}</span>
               </div>
 
-              {article.byline && (
+              {bylineText && (
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <span>{article.byline}</span>
+                  <span>{bylineText}</span>
                 </div>
               )}
             </div>

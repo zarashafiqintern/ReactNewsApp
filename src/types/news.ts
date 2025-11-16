@@ -10,6 +10,7 @@ export interface Article {
   multimedia?: Array<{
     url: string;
   }>;
+  byline?: string | string[];
 }
 
 export interface NewsResponse {
