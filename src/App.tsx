@@ -41,7 +41,8 @@ function App() {
         source: 'The Guardian',
         multimedia: article.fields?.thumbnail 
           ? [{ url: article.fields.thumbnail }]
-          : undefined
+          : undefined,
+        byline: article.fields?.byline
       }));
       combined.push(...guardianArticles);
     }
@@ -56,7 +57,8 @@ function App() {
         source: article.source_id || 'World News',
         multimedia: article.image_url 
           ? [{ url: article.image_url }]
-          : undefined
+          : undefined,
+        byline: article.creator ? article.creator.join(', ') : undefined
       }));
       combined.push(...worldArticles);
     }
@@ -78,14 +80,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-
-      <header className="bg-white shadow-sm  z-10">
+      <header className="bg-white shadow-sm z-10">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-gray-900">
             📰 News Aggregator
           </h1>
           <p className="text-gray-600 mt-1">
-             Multiple news sources in one place
+            Multiple news sources in one place
           </p>
 
           <div className="mt-6">
