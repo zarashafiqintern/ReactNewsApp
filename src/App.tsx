@@ -1,55 +1,34 @@
-import { useQuery } from '@tanstack/react-query';
-import { useState, useMemo } from 'react';
-import { fetchNews } from './services/newsApi';
-import { fetchGuardianNews } from './services/guardianApi';
-import { fetchWorldNews } from './services/worldnewsApi';
-import { NewsCard } from './components/NewsCard';
-import type { Article } from './types/news';
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { fetchNews } from "./services/newsApi";
+import { fetchGuardianNews } from "./services/guardianApi";
+import { fetchWorldNews } from "./services/worldnewsApi";
+import { NewsCard } from "./components/NewsCard";
+import { useShuffledArticles } from "./hooks/useShuffledArticles";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("Politics");
 
   const { data: newsData, isLoading: newsLoading } = useQuery({
-    queryKey: ['news', searchQuery],
+    queryKey: ["news", searchQuery],
     queryFn: () => fetchNews(searchQuery),
-    retry: 1,
   });
 
   const { data: guardianData, isLoading: guardianLoading } = useQuery({
-    queryKey: ['guardian-news', searchQuery],
+    queryKey: ["guardian-news", searchQuery],
     queryFn: () => fetchGuardianNews(searchQuery),
-    retry: 1,
   });
 
   const { data: worldNewsData, isLoading: worldNewsLoading } = useQuery({
-    queryKey: ['world-news', searchQuery],
+    queryKey: ["world-news", searchQuery],
     queryFn: () => fetchWorldNews(searchQuery),
-    retry: 1,
   });
 
-  const shuffledArticles = useMemo(() => {
-    const combined: Article[] = [];
-
-    if (newsData?.response?.docs) {
-      combined.push(...newsData.response.docs);
-    }
-
-    if (guardianData?.response?.docs) {
-      combined.push(...guardianData.response.docs);
-    }
-
-    if (worldNewsData?.response?.docs) {
-      combined.push(...worldNewsData.response.docs);
-    }
-
-    const shuffled = [...combined];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    return shuffled;
-  }, [newsData, guardianData, worldNewsData]);
+  const shuffledArticles = useShuffledArticles(
+    newsData,
+    guardianData,
+    worldNewsData
+  );
 
   const isLoading = newsLoading || guardianLoading || worldNewsLoading;
 
@@ -61,12 +40,8 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm z-10">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            📰 News Aggregator
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Multiple news sources in one place
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">📰 News Aggregator</h1>
+          <p className="text-gray-600 mt-1">Multiple news sources in one place</p>
 
           <form onSubmit={handleSearch} className="mt-6">
             <div className="flex gap-2">
@@ -89,7 +64,11 @@ function App() {
           {isLoading && (
             <div className="mt-4 flex gap-2 items-center text-sm text-gray-600">
               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <span>Loading from {newsLoading ? 'NewsAPI, ' : ''}{guardianLoading ? 'Guardian, ' : ''}{worldNewsLoading ? 'World News' : ''}</span>
+              <span>
+                Loading from {newsLoading ? "NewsAPI, " : ""}
+                {guardianLoading ? "Guardian, " : ""}
+                {worldNewsLoading ? "World News" : ""}
+              </span>
             </div>
           )}
         </div>
