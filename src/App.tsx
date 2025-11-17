@@ -5,14 +5,14 @@ import { fetchGuardianNews } from "./services/guardianApi";
 import { fetchWorldNews } from "./services/worldnewsApi";
 import { NewsCard } from "./components/NewsCard";
 import { useShuffledArticles } from "./hooks/useShuffledArticles";
-import { Filters} from "./components/Filters";
+import { Filters } from "./components/Filters";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("Politics");
-
   const [sourceFilter, setSourceFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
 
   const { data: newsData, isLoading: newsLoading } = useQuery({
     queryKey: ["news", searchQuery],
@@ -29,19 +29,25 @@ function App() {
     queryFn: () => fetchWorldNews(searchQuery),
   });
 
-  const shuffledArticles = useShuffledArticles(newsData, guardianData, worldNewsData);
+  const shuffledArticles = useShuffledArticles(
+    newsData,
+    guardianData,
+    worldNewsData
+  );
 
   const isLoading = newsLoading || guardianLoading || worldNewsLoading;
 
   const filteredArticles = useMemo(() => {
     return shuffledArticles.filter((article) => {
-
       if (sourceFilter !== "all") {
-        if (sourceFilter === "newsapi" && !article._id.includes("newsapi")) return false;
-        if (sourceFilter === "guardian" && article.source !== "The Guardian") return false;
+        if (sourceFilter === "newsapi" && !article._id.includes("newsapi"))
+          return false;
+        if (sourceFilter === "guardian" && article.source !== "The Guardian")
+          return false;
         if (
           sourceFilter === "worldnews" &&
-          (article.source === "The Guardian" || article._id.includes("newsapi"))
+          (article.source === "The Guardian" ||
+            article._id.includes("newsapi"))
         )
           return false;
       }
@@ -50,9 +56,16 @@ function App() {
       if (dateFrom && articleDate < new Date(dateFrom)) return false;
       if (dateTo && articleDate > new Date(dateTo)) return false;
 
+      const rawAuthor = article.byline || article.author || "";
+      const articleAuthor = Array.isArray(rawAuthor)
+        ? rawAuthor.join(", ").trim()
+        : rawAuthor.trim();
+
+      if (authorFilter && articleAuthor !== authorFilter) return false;
+
       return true;
     });
-  }, [shuffledArticles, sourceFilter, dateFrom, dateTo]);
+  }, [shuffledArticles, sourceFilter, dateFrom, dateTo, authorFilter]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,14 +104,17 @@ function App() {
           setDateFrom={setDateFrom}
           dateTo={dateTo}
           setDateTo={setDateTo}
+          authorFilter={authorFilter}
+          setAuthorFilter={setAuthorFilter}
+          shuffledArticles={shuffledArticles}
         />
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {isLoading && filteredArticles.length === 0 && (
           <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              <p className="mt-4 text-gray-600">Loading news from all sources...</p>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Loading news from all sources...</p>
           </div>
         )}
 
