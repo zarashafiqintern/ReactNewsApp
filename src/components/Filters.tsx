@@ -41,7 +41,7 @@ export const Filters: React.FC<FiltersProps> = ({
   }, [shuffledArticles]);
 
   return (
-    <div className="bg-white border-t p-4 flex flex-wrap gap-4 z-20">
+    <div className="bg-white p-4 flex flex-wrap gap-4 z-20">
       <select
         value={sourceFilter}
         onChange={(e) => setSourceFilter(e.target.value)}
