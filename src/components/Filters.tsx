@@ -40,12 +40,25 @@ export const Filters: React.FC<FiltersProps> = ({
     return Array.from(authors).sort();
   }, [shuffledArticles]);
 
+  const hasActiveFilters = 
+    sourceFilter !== "all" || 
+    dateFrom !== "" || 
+    dateTo !== "" || 
+    authorFilter !== "";
+
+  const handleClearFilters = () => {
+    setSourceFilter("all");
+    setDateFrom("");
+    setDateTo("");
+    setAuthorFilter("");
+  };
+
   return (
-    <div className="bg-white p-4 flex flex-wrap gap-4 z-20">
+    <div className="bg-white p-4 flex flex-wrap items-center gap-4 z-20">
       <select
         value={sourceFilter}
         onChange={(e) => setSourceFilter(e.target.value)}
-        className="px-3 py-2 border rounded-lg"
+        className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="all">All Sources</option>
         <option value="newsapi">News API</option>
@@ -56,7 +69,7 @@ export const Filters: React.FC<FiltersProps> = ({
       <select
         value={authorFilter}
         onChange={(e) => setAuthorFilter(e.target.value)}
-        className="px-3 py-2 border rounded-lg"
+        className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="">All Authors</option>
         {availableAuthors.map((author) => (
@@ -68,17 +81,27 @@ export const Filters: React.FC<FiltersProps> = ({
 
       <input
         type="date"
-        className="px-3 py-2 border rounded-lg"
+        className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={dateFrom}
         onChange={(e) => setDateFrom(e.target.value)}
       />
 
       <input
         type="date"
-        className="px-3 py-2 border rounded-lg"
+        className="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={dateTo}
         onChange={(e) => setDateTo(e.target.value)}
       />
+
+      {hasActiveFilters && (
+        <button
+          onClick={handleClearFilters}
+          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2"
+        >
+          <span>✕</span>
+          Clear Filters
+        </button>
+      )}
     </div>
   );
 };
