@@ -15,10 +15,9 @@ export const NewsCard = ({ article }: NewsCardProps) => {
       state: { article }
     });
   };
-
-  return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <div className="relative h-48 overflow-hidden">
+return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+      <div className="relative h-48 overflow-hidden shrink-0">
         <img
           src={imageUrl}
           alt={article.headline.main}
@@ -29,7 +28,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
         />
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col grow">
         <div className="mb-3">
           <h2 className="text-xl font-bold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors">
             {article.headline.main}
@@ -51,7 +50,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
           </span>
         </div>
 
-        <div className="pt-3 border-t">
+        <div className="pt-3 border-t mt-auto">
           <button
             onClick={handleViewClick}
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
@@ -62,4 +61,5 @@ export const NewsCard = ({ article }: NewsCardProps) => {
       </div>
     </div>
   );
-};
+  };
+  
