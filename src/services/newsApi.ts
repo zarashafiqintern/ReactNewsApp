@@ -1,4 +1,5 @@
 import type { NewsResponse, NewsAPIResponse } from '../types/news';
+import { v4 as uuidv4 } from 'uuid';
 
 const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const BASE_URL = 'https://newsapi.org/v2/everything';
@@ -17,8 +18,8 @@ export const fetchNews = async (query: string = 'technology'): Promise<NewsRespo
   return {
     status: data.status,
     response: {
-      docs: data.articles.map((article, index) => ({
-        id: `newsapi-${index}-${Date.now()}`,
+      docs: data.articles.map((article) => ({
+        id: uuidv4(),
         title: article.title,
         description: article.description || 'No description available',
         url: article.url,

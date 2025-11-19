@@ -56,7 +56,7 @@ function App() {
       if (dateFrom && articleDate < new Date(dateFrom)) return false;
       if (dateTo && articleDate > new Date(dateTo)) return false;
 
-      const rawAuthor = article.author || article.author || "";
+      const rawAuthor = article.author || "";
       const articleAuthor = Array.isArray(rawAuthor)
         ? rawAuthor.join(", ").trim()
         : rawAuthor.trim();

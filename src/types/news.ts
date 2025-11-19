@@ -7,7 +7,7 @@ export interface Article {
   source: string; 
   thumbnail?: string; 
   author?: string | string[];
-  category?: any; 
+  category?: string; 
 }
 
 export interface NewsResponse {
@@ -30,4 +30,38 @@ export interface NewsAPIResponse {
     publishedAt: string;
     content: string;
   }>;
+}
+
+export interface WorldNewsAPIResponse {
+status: string;
+results: Array<{
+article_id: string;
+title: string;
+description?: string;
+content?: string;
+link: string;
+pubDate: string;
+source_id?: string;
+image_url?: string;
+creator?: string[];
+}>;
+}
+
+export interface GuardianArticle {
+  id: string;
+  webTitle: string;
+  webUrl: string;
+  webPublicationDate: string;
+  fields?: {
+    trailText?: string;
+    thumbnail?: string;
+    author?: string;
+  };
+}
+
+export interface GuardianAPIResponse {
+  response: {
+    status: string;
+    results: GuardianArticle[];
+  };
 }
