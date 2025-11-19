@@ -23,14 +23,14 @@ const NewsDetailPage = () => {
     );
   }
 
-  const imageUrl = article.multimedia?.[0]?.url || PLACEHOLDER_IMAGE_LARGE;
-  const bylineText = Array.isArray(article.byline) 
-    ? article.byline.join(', ') 
-    : article.byline;
+  const imageUrl = article.thumbnail|| PLACEHOLDER_IMAGE_LARGE;
+  const bylineText = Array.isArray(article.author) 
+    ? article.author.join(', ') 
+    : article.author;
 
   return (
     <div className="min-h-screen bg-gray-50">
-       <header className="bg-white shadow-sm z-10">
+      <header className="bg-white shadow-sm z-10">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <button
             onClick={() => navigate('/')}
@@ -46,11 +46,9 @@ const NewsDetailPage = () => {
           <div className="w-full h-96 overflow-hidden bg-gray-200">
             <img
               src={imageUrl}
-              alt={article.headline.main}
+              alt={article.title || 'No title'}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE_LARGE;
-              }}
+              onError={(e) => { (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE_LARGE; }}
             />
           </div>
 
@@ -62,7 +60,7 @@ const NewsDetailPage = () => {
             </div>
 
             <h1 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
-              {article.headline.main}
+              {article.title || 'No title'}
             </h1>
 
             <div className="flex items-center gap-6 mb-6 text-sm text-gray-600 border-b pb-4">
@@ -70,7 +68,7 @@ const NewsDetailPage = () => {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span>{new Date(article.pub_date).toLocaleDateString('en-US', {
+                <span>{new Date(article.publishedAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
@@ -89,13 +87,13 @@ const NewsDetailPage = () => {
 
             <div className="prose prose-lg max-w-none mb-8">
               <p className="text-xl text-gray-700 leading-relaxed">
-                {article.abstract || 'No description available for this article.'}
+                {article.description || 'No description available for this article.'}
               </p>
             </div>
 
             <div className="border-t pt-6">
               <a
-                href={article.web_url}
+                href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"

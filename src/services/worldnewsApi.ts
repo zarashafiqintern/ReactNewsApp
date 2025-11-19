@@ -11,23 +11,21 @@ export const fetchWorldNews = async (query: string = 'technology'): Promise<News
   if (!response.ok) {
     throw new Error(`World News API Error: ${response.status} - ${response.statusText}`);
   }
-  
+
   const data = await response.json();
-  
+
   return {
     status: data.status,
     response: {
       docs: data.results?.map((article: any) => ({
-        _id: article.article_id,
-        headline: { main: article.title },
-        abstract: article.description || article.content || 'No description available',
-        web_url: article.link,
-        pub_date: article.pubDate,
+        id: article.article_id,
+        title: article.title,
+        description: article.description || article.content || 'No description available',
+        url: article.link,
+        publishedAt: article.pubDate,
         source: article.source_id || 'World News',
-        multimedia: article.image_url 
-          ? [{ url: article.image_url }]
-          : undefined,
-        byline: article.creator ? article.creator.join(', ') : undefined,
+        thumbnail: article.image_url || undefined,
+        author: article.creator ? article.creator.join(', ') : undefined,
       })) || [],
     },
   };

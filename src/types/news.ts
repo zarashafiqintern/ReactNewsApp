@@ -1,16 +1,13 @@
 export interface Article {
-  _id: string;
-  headline: {
-    main: string;
-  };
-  abstract: string;
-  web_url: string;
-  pub_date: string;
-  source: string;
-  multimedia?: Array<{
-    url: string;
-  }>;
-  byline?: string | string[];
+  id: string;
+  title: string; 
+  description: string; 
+  url: string; 
+  publishedAt: string; 
+  source: string; 
+  thumbnail?: string; 
+  author?: string | string[];
+  category?: any; 
 }
 
 export interface NewsResponse {

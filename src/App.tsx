@@ -40,23 +40,23 @@ function App() {
   const filteredArticles = useMemo(() => {
     return shuffledArticles.filter((article) => {
       if (sourceFilter !== "all") {
-        if (sourceFilter === "newsapi" && !article._id.includes("newsapi"))
+        if (sourceFilter === "newsapi" && !article.id.includes("newsapi"))
           return false;
         if (sourceFilter === "guardian" && article.source !== "The Guardian")
           return false;
         if (
           sourceFilter === "worldnews" &&
           (article.source === "The Guardian" ||
-            article._id.includes("newsapi"))
+            article.id.includes("newsapi"))
         )
           return false;
       }
 
-      const articleDate = new Date(article.pub_date);
+      const articleDate = new Date(article.publishedAt);
       if (dateFrom && articleDate < new Date(dateFrom)) return false;
       if (dateTo && articleDate > new Date(dateTo)) return false;
 
-      const rawAuthor = article.byline || article.author || "";
+      const rawAuthor = article.author || article.author || "";
       const articleAuthor = Array.isArray(rawAuthor)
         ? rawAuthor.join(", ").trim()
         : rawAuthor.trim();
@@ -121,7 +121,7 @@ function App() {
         {filteredArticles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredArticles.map((article) => (
-              <NewsCard key={article._id} article={article} />
+              <NewsCard key={article.id} article={article} />
             ))}
           </div>
         )}

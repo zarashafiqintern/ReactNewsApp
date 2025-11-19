@@ -8,19 +8,20 @@ interface NewsCardProps {
 
 export const NewsCard = ({ article }: NewsCardProps) => {
   const navigate = useNavigate();
-  const imageUrl = article.multimedia?.[0]?.url || PLACEHOLDER_IMAGE_SMALL;
+  const imageUrl = article.thumbnail || PLACEHOLDER_IMAGE_SMALL;
 
   const handleViewClick = () => {
-    navigate(`/news/${encodeURIComponent(article._id)}`, {
+    navigate(`/news/${encodeURIComponent(article.id)}`, {
       state: { article }
     });
   };
-return (
+
+  return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
       <div className="relative h-48 overflow-hidden shrink-0">
         <img
           src={imageUrl}
-          alt={article.headline.main}
+          alt={article.title || 'No title'}
           className="w-full h-full object-cover"
           onError={(e) => {
             (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE_SMALL;
@@ -31,19 +32,19 @@ return (
       <div className="p-4 flex flex-col grow">
         <div className="mb-3">
           <h2 className="text-xl font-bold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors">
-            {article.headline.main}
+            {article.title || 'No title'}
           </h2>
         </div>
 
         <div className="mb-4">
           <p className="text-gray-600 text-sm line-clamp-3">
-            {article.abstract || 'No description available'}
+            {article.description || 'No description available'}
           </p>
         </div>
 
         <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
           <span className="flex items-center gap-1">
-            📅 {new Date(article.pub_date).toLocaleDateString()}
+            📅 {new Date(article.publishedAt).toLocaleDateString()}
           </span>
           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
             {article.source || 'News'}
@@ -61,5 +62,4 @@ return (
       </div>
     </div>
   );
-  };
-  
+};

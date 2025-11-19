@@ -7,27 +7,25 @@ export const fetchGuardianNews = async (query: string = 'technology'): Promise<N
   const response = await fetch(
     `${BASE_URL}?q=${query}&api-key=${GUARDIAN_API_KEY}&show-fields=thumbnail,trailText,byline`
   );
-  
+
   if (!response.ok) {
     throw new Error(`Guardian API Error: ${response.status} - ${response.statusText}`);
   }
-  
+
   const data = await response.json();
-  
+
   return {
     status: data.response.status,
     response: {
       docs: data.response.results.map((article: any) => ({
-        _id: article.id,
-        headline: { main: article.webTitle },
-        abstract: article.fields?.trailText || 'No description available',
-        web_url: article.webUrl,
-        pub_date: article.webPublicationDate,
+        id: article.id,
+        title: article.webTitle,
+        description: article.fields?.trailText || 'No description available',
+        url: article.webUrl,
+        publishedAt: article.webPublicationDate,
         source: 'The Guardian',
-        multimedia: article.fields?.thumbnail 
-          ? [{ url: article.fields.thumbnail }]
-          : undefined,
-        byline: article.fields?.byline,
+        thumbnail: article.fields?.thumbnail || undefined,
+        author: article.fields?.byline,
       })),
     },
   };
