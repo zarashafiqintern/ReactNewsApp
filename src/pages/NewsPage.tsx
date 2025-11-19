@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { fetchNews } from "../services/newsApi";
 import { fetchGuardianNews } from "../services/guardianApi";
@@ -7,6 +7,12 @@ import { NewsCard } from "../components/NewsCard";
 import { useShuffledArticles } from "../hooks/useShuffledArticles";
 import { Filters } from "../components/Filters";
 
+const NEWS_SOURCES = [
+  { key: "news", queryKey: ["news"], fetchFn: fetchNews },
+  { key: "guardian", queryKey: ["guardian-news"], fetchFn: fetchGuardianNews },
+  { key: "worldNews", queryKey: ["world-news"], fetchFn: fetchWorldNews },
+];
+
 function NewsPage() {
   const [searchQuery, setSearchQuery] = useState("Politics");
   const [sourceFilter, setSourceFilter] = useState("all");
@@ -14,28 +20,21 @@ function NewsPage() {
   const [dateTo, setDateTo] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
 
-  const { data: newsData, isLoading: newsLoading } = useQuery({
-    queryKey: ["news", searchQuery],
-    queryFn: () => fetchNews(searchQuery),
+  const results = useQueries({
+    queries: NEWS_SOURCES.map(source => ({
+      queryKey: [...source.queryKey, searchQuery],
+      queryFn: () => source.fetchFn(searchQuery),
+    }))
   });
 
-  const { data: guardianData, isLoading: guardianLoading } = useQuery({
-    queryKey: ["guardian-news", searchQuery],
-    queryFn: () => fetchGuardianNews(searchQuery),
-  });
-
-  const { data: worldNewsData, isLoading: worldNewsLoading } = useQuery({
-    queryKey: ["world-news", searchQuery],
-    queryFn: () => fetchWorldNews(searchQuery),
-  });
+  const [newsData, guardianData, worldNewsData] = results.map(result => result.data);
+  const isLoading = results.some(result => result.isLoading);
 
   const shuffledArticles = useShuffledArticles(
     newsData,
     guardianData,
     worldNewsData
   );
-
-  const isLoading = newsLoading || guardianLoading || worldNewsLoading;
 
   const filteredArticles = useMemo(() => {
     return shuffledArticles.filter((article) => {
@@ -56,10 +55,10 @@ function NewsPage() {
       if (dateFrom && articleDate < new Date(dateFrom)) return false;
       if (dateTo && articleDate > new Date(dateTo)) return false;
 
-      const rawAuthor = article.author || "";
-      const articleAuthor = Array.isArray(rawAuthor)
-        ? rawAuthor.join(", ").trim()
-        : rawAuthor.trim();
+      const Author = article.author || "";
+      const articleAuthor = Array.isArray(Author)
+        ? Author.join(", ").trim()
+        : Author.trim();
 
       if (authorFilter && articleAuthor !== authorFilter) return false;
 
