@@ -24,8 +24,8 @@ const NewsDetailPage = () => {
   }
 
   const imageUrl = article.thumbnail|| PLACEHOLDER_IMAGE_LARGE;
-  const bylineText = Array.isArray(article.author) 
-    ? article.author.join(', ') 
+  const bylineText = Array.isArray(article.author)
+    ? article.author.join(', ')
     : article.author;
 
   return (
@@ -87,7 +87,7 @@ const NewsDetailPage = () => {
 
             <div className="prose prose-lg max-w-none mb-8">
               <p className="text-xl text-gray-700 leading-relaxed">
-                {article.description || 'No description available for this article.'}
+                {article.description || " "}
               </p>
             </div>
 

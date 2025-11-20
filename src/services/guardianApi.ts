@@ -21,7 +21,7 @@ export const fetchGuardianNews = async (query: string = 'technology'): Promise<N
       docs: data.response.results.map((article) => ({
         id: uuidv4(),
         title: article.webTitle,
-        description: article.fields?.trailText || 'No description available',
+        description: article.fields?.trailText || "",
         url: article.webUrl,
         publishedAt: article.webPublicationDate,
         source: 'The Guardian',

@@ -28,11 +28,11 @@ export const Filters: React.FC<FiltersProps> = ({
     const authors = new Set<string>();
 
     shuffledArticles?.forEach((article) => {
-      const rawAuthor = article.byline || article.author || "";
+      const Author = article.author || "";
 
-      const author = Array.isArray(rawAuthor)
-        ? rawAuthor.join(", ").trim()
-        : rawAuthor.trim();
+      const author = Array.isArray(Author)
+        ? Author.join(", ").trim()
+        : Author.trim();
 
       if (author) authors.add(author);
     });

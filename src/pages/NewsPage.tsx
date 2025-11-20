@@ -15,7 +15,7 @@ const NEWS_SOURCES = [
 
 function NewsPage() {
   const [searchQuery, setSearchQuery] = useState("Politics");
-  const [sourceFilter, setSourceFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("null");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");

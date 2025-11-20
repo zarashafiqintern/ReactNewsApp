@@ -21,12 +21,12 @@ export const fetchNews = async (query: string = 'technology'): Promise<NewsRespo
       docs: data.articles.map((article) => ({
         id: uuidv4(),
         title: article.title,
-        description: article.description || 'No description available',
+        description: article.description || " ",
         url: article.url,
         publishedAt: article.publishedAt,
         source: article.source.name,
-        thumbnail: article.urlToImage || undefined,
-        author: article.author || undefined,
+        thumbnail: article.urlToImage || "",
+        author: article.author ||" ",
       })),
     },
   };
