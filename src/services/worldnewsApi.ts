@@ -26,7 +26,8 @@ export const fetchWorldNews = async (query: string = 'technology'): Promise<News
         publishedAt: article.pubDate,
         source: article.source_id || 'World News',
         thumbnail: article.image_url,
-        author: article.creator ? article.creator.join(', ') : "",
+       author: article.creator || [],
+        // author: article.creator ? article.creator.join(', ') : "",
       })),
     },
   };

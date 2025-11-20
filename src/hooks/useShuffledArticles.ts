@@ -8,17 +8,11 @@ export function useShuffledArticles(
 ) {
   return useMemo(() => {
     const combined: Article[] = [];
+    if (guardianData?.response?.docs) combined.push(...guardianData.response.docs);
 
     if (newsData?.response?.docs) combined.push(...newsData.response.docs);
-    if (guardianData?.response?.docs) combined.push(...guardianData.response.docs);
     if (worldNewsData?.response?.docs) combined.push(...worldNewsData.response.docs);
 
-    const shuffled = [...combined];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    return shuffled;
+    return combined;
   }, [newsData, guardianData, worldNewsData]);
 }

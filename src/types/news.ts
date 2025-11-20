@@ -6,7 +6,7 @@ export interface Article {
   publishedAt: string; 
   source: string; 
   thumbnail?: string; 
-  author?: string | string[];
+  author?: string[];
   category?: string; 
 }
 
@@ -55,7 +55,7 @@ export interface GuardianArticle {
   fields?: {
     trailText?: string;
     thumbnail?: string;
-    author?: string;
+    author?: string[];
   };
 }
 

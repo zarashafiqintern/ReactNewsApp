@@ -26,7 +26,8 @@ export const fetchNews = async (query: string = 'technology'): Promise<NewsRespo
         publishedAt: article.publishedAt,
         source: article.source.name,
         thumbnail: article.urlToImage || "",
-        author: article.author ||" ",
+        // author: article.author ||" ",
+        author: article.author ? [article.author] : [],
       })),
     },
   };
