@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import type { Article } from '../types/news';
-import { PLACEHOLDER_IMAGE_SMALL } from '../constants/images';
+import { handleImageError, encodeId } from '../utils';
+import news from '../assets/news.webp';
 
 interface NewsCardProps {
   article: Article;
@@ -8,32 +9,37 @@ interface NewsCardProps {
 
 export const NewsCard = ({ article }: NewsCardProps) => {
   const navigate = useNavigate();
-  const imageUrl = article.thumbnail || PLACEHOLDER_IMAGE_SMALL;
+  const imageUrl = article.thumbnail || news;
 
   const handleViewClick = () => {
-    navigate(`/news/${encodeURIComponent(article.id)}`, {
-      state: { article }
-    });
+    navigate(`/news/${encodeId(article.id)}`, { state: { article } });
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-      <div className="relative h-48 overflow-hidden shrink-0">
+    <div
+      className="bg-white overflow-hidden hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
+      style={{
+        borderRadius: '16px',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      }}
+    >
+      <div className="relative h-48 overflow-hidden shrink-0 group">
         <img
           src={imageUrl}
           alt={article.title || 'No title'}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE_SMALL;
-          }}
+          className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110 bg-gray-100"
+          onError={(e) => handleImageError(e, news)}
         />
       </div>
 
       <div className="p-4 flex flex-col grow">
-        <div className="mb-3">
-          <h2 className="text-xl font-bold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors">
+        <div className="mb-3 flex justify-between items-start">
+          <h2 className="text-xl font-bold text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors pr-2">
             {article.title || 'No title'}
           </h2>
+          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium text-xs whitespace-nowrap">
+            {article.source || 'News'}
+          </span>
         </div>
 
         <div className="mb-4">
@@ -42,21 +48,12 @@ export const NewsCard = ({ article }: NewsCardProps) => {
           </p>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-          <span className="flex items-center gap-1">
-            📅 {new Date(article.publishedAt).toLocaleDateString()}
-          </span>
-          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
-            {article.source || 'News'}
-          </span>
-        </div>
-
-        <div className="pt-3 border-t mt-auto">
+        <div className="pt-3 mt-auto flex justify-end border-t">
           <button
             onClick={handleViewClick}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm md:text-base font-medium cursor-pointer"
           >
-            View Details →
+            View Details
           </button>
         </div>
       </div>

@@ -19,15 +19,14 @@ export const fetchWorldNews = async (query: string = 'technology'): Promise<News
     status: data.status,
     response: {
       docs: data.results.map((article) => ({
-        id: uuidv4(),
+        id: `worldnews-${uuidv4()}`,
         title: article.title,
-        description: article.description || article.content || "",
+        description: article.description || article.content || '',
         url: article.link,
         publishedAt: article.pubDate,
         source: article.source_id || 'World News',
         thumbnail: article.image_url,
-       author: article.creator || [],
-        // author: article.creator ? article.creator.join(', ') : "",
+        author: article.creator || [],
       })),
     },
   };

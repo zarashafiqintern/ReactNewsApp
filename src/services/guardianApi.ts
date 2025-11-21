@@ -1,12 +1,39 @@
-import type { NewsResponse, GuardianAPIResponse } from '../types/news';
+import type { GuardianAPIResponse, GuardianNewsResponse, Article } from '../types/news';
 import { v4 as uuidv4 } from 'uuid';
 
 const GUARDIAN_API_KEY = import.meta.env.VITE_GUARDIAN_API_KEY;
 const BASE_URL = 'https://content.guardianapis.com/search';
 
-export const fetchGuardianNews = async (query: string = 'technology'): Promise<NewsResponse> => {
+const extractAuthorsFromGuardian = (
+  byline?: string,
+  tags?: Array<{ id: string; type: string; webTitle: string }>
+): string[] => {
+  let authors: string[] = [];
+
+  if (byline) {
+    const cleanedByline = byline.replace(/^By\s+/i, '').trim();
+    if (cleanedByline && cleanedByline !== 'Guardian staff reporter') {
+      authors.push(cleanedByline);
+    }
+  }
+
+  if (tags && tags.length > 0) {
+    const contributorTags = tags.filter(
+      (tag) => tag.type === 'contributor' && tag.webTitle
+    );
+    if (contributorTags.length > 0) {
+      authors = contributorTags.map((tag) => tag.webTitle);
+    }
+  }
+
+  return authors;
+};
+
+export const fetchGuardianNews = async (
+  query: string = 'technology'
+): Promise<GuardianNewsResponse> => {
   const response = await fetch(
-    `${BASE_URL}?q=${query}&api-key=${GUARDIAN_API_KEY}&show-fields=thumbnail,trailText,byline`
+    `${BASE_URL}?q=${query}&api-key=${GUARDIAN_API_KEY}&show-fields=thumbnail,trailText,byline&show-tags=contributor`
   );
 
   if (!response.ok) {
@@ -18,16 +45,23 @@ export const fetchGuardianNews = async (query: string = 'technology'): Promise<N
   return {
     status: data.response.status,
     response: {
-      docs: data.response.results.map((article) => ({
-        id: uuidv4(),
-        title: article.webTitle,
-        description: article.fields?.trailText || "",
-        url: article.webUrl,
-        publishedAt: article.webPublicationDate,
-        source: 'The Guardian',
-        thumbnail: article.fields?.thumbnail,
-        author: article.fields?.author,
-      })),
+      docs: data.response.results.map((article): Article => {
+        const authors = extractAuthorsFromGuardian(
+          article.fields?.byline,
+          article.tags
+        );
+
+        return {
+          id: `guardian-${uuidv4()}`,
+          title: article.webTitle,
+          description: article.fields?.trailText || '',
+          url: article.webUrl,
+          publishedAt: article.webPublicationDate,
+          source: 'The Guardian',
+          thumbnail: article.fields?.thumbnail || '',
+          author: authors.length > 0 ? authors : [],
+        };
+      }),
     },
   };
 };

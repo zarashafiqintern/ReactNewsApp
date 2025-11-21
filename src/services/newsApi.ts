@@ -19,14 +19,13 @@ export const fetchNews = async (query: string = 'technology'): Promise<NewsRespo
     status: data.status,
     response: {
       docs: data.articles.map((article) => ({
-        id: uuidv4(),
+        id: `newsapi-${uuidv4()}`,
         title: article.title,
-        description: article.description || " ",
+        description: article.description || '',
         url: article.url,
         publishedAt: article.publishedAt,
         source: article.source.name,
-        thumbnail: article.urlToImage || "",
-        // author: article.author ||" ",
+        thumbnail: article.urlToImage || '',
         author: article.author ? [article.author] : [],
       })),
     },
