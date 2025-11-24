@@ -2,7 +2,7 @@ import type { NewsResponse, WorldNewsAPIResponse } from '../types/news';
 import { v4 as uuidv4 } from 'uuid';
 
 const WORLD_NEWS_API_KEY = import.meta.env.VITE_WORLD_NEWS_API_KEY;
-const BASE_URL = 'https://newsdata.io/api/1/news';
+const BASE_URL = import.meta.env.VITE_WORLD_NEWS_BASE_URL;
 
 export const fetchWorldNews = async (query: string = 'technology'): Promise<NewsResponse> => {
   const response = await fetch(

@@ -26,14 +26,14 @@ interface NewsProviderProps {
   children: ReactNode;
 }
 
-export const NewsProvider = ({ children }: NewsProviderProps) => {
-
+export function NewsProvider({ children }: NewsProviderProps) {
   const [searchQuery, setSearchQuery] = useState('Politics');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('Politics');
-
   const [filters, setFilters] = useState<FiltersState>(INITIAL_FILTERS);
-
   const [showFilters, setShowFilters] = useState(false);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3; 
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,6 +45,10 @@ export const NewsProvider = ({ children }: NewsProviderProps) => {
   useEffect(() => {
     setFilters((prev) => ({ ...prev, authorFilter: '' }));
   }, [filters.sourceFilter]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, debouncedSearchQuery]);
 
   const results = useQueries({
     queries: NEWS_SOURCES.map((source) => ({
@@ -67,6 +71,14 @@ export const NewsProvider = ({ children }: NewsProviderProps) => {
       filters.authorFilter
     );
   }, [shuffledArticles, filters]);
+
+  const paginatedArticles = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredArticles.slice(startIndex, endIndex);
+  }, [filteredArticles, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
 
   const availableAuthors = useMemo(() => {
     return extractAuthors(shuffledArticles, filters.sourceFilter);
@@ -92,8 +104,7 @@ export const NewsProvider = ({ children }: NewsProviderProps) => {
     setFilters(INITIAL_FILTERS);
   };
 
-  const hasActiveFilters =
-    filters.sourceFilter !== 'all' ||
+  const hasActiveFilters = filters.sourceFilter !== 'all' ||
     filters.dateFrom !== '' ||
     filters.dateTo !== '' ||
     filters.authorFilter !== '';
@@ -121,10 +132,15 @@ export const NewsProvider = ({ children }: NewsProviderProps) => {
     shuffledArticles,
     filteredArticles,
     availableAuthors,
+    currentPage,
+    setCurrentPage,
+    paginatedArticles,
+    totalPages,
+    itemsPerPage,
   };
 
   return <NewsContext.Provider value={value}>{children}</NewsContext.Provider>;
-};
+}
 
 export const useNews = (): NewsContextType => {
   const context = useContext(NewsContext);

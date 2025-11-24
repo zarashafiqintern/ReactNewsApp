@@ -33,7 +33,7 @@ export const getAuthorText = (author: string | string[] | undefined): string | n
   return null;
 };
 
-export const normalizeAuthor = (author: string | string[] | undefined): string => {
+export const filterAuthor = (author: string | string[] | undefined): string => {
   if (!author) return '';
   return Array.isArray(author) ? author.join(', ').trim() : author.trim();
 };
@@ -42,24 +42,25 @@ export const matchesSourceFilter = (
   article: Article,
   sourceFilter: SourceFilterType
 ): boolean => {
+
   if (sourceFilter === 'all') return true;
 
   const src = article.source?.toLowerCase() || '';
   const id = article.id?.toLowerCase() || '';
 
-  switch (sourceFilter) {
-    case 'newsapi':
-      return id.includes('newsapi') || 
-             (!src.includes('guardian') && !src.includes('world news'));
-    case 'guardian':
-      return src.includes('guardian') || src === 'the guardian';
-    case 'worldnews':
-      return src.includes('world news') || 
-             id.includes('worldnews') ||
-             (!src.includes('guardian') && !id.includes('newsapi'));
-    default:
-      return true;
+  if (sourceFilter === 'newsapi') {
+    return id.includes('newsapi') || (!src.includes('guardian') && !src.includes('world news'));
   }
+
+  if (sourceFilter === 'guardian') {
+    return src.includes('guardian') || src === 'the guardian';
+  }
+
+  if (sourceFilter === 'worldnews') {
+    return src.includes('world news') || id.includes('worldnews') || (!src.includes('guardian') && !id.includes('newsapi'));
+  }
+
+  return true;
 };
 
 export const filterArticles = (
@@ -76,7 +77,7 @@ export const filterArticles = (
     if (!isDateInRange(articleDate, dateFrom, dateTo)) return false;
 
     if (authorFilter) {
-      const articleAuthor = normalizeAuthor(article.author);
+      const articleAuthor = filterAuthor(article.author);
       if (articleAuthor !== authorFilter) return false;
     }
 
@@ -95,7 +96,7 @@ export const extractAuthors = (
   const authors = new Set<string>();
 
   filteredBySource.forEach((article) => {
-    const author = normalizeAuthor(article.author);
+    const author = filterAuthor(article.author);
     if (author) authors.add(author);
   });
 
@@ -104,10 +105,10 @@ export const extractAuthors = (
 
 export const handleImageError = (
   e: React.SyntheticEvent<HTMLImageElement, Event>,
-  fallbackSrc: string
+  defaultSrc: string
 ): void => {
   const target = e.target as HTMLImageElement;
-  target.src = fallbackSrc;
+  target.src = defaultSrc;
   target.alt = '_';
 };
 

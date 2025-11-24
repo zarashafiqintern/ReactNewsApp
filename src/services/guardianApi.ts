@@ -2,18 +2,18 @@ import type { GuardianAPIResponse, GuardianNewsResponse, Article } from '../type
 import { v4 as uuidv4 } from 'uuid';
 
 const GUARDIAN_API_KEY = import.meta.env.VITE_GUARDIAN_API_KEY;
-const BASE_URL = 'https://content.guardianapis.com/search';
+const BASE_URL = import.meta.env.VITE_GUARDIAN_BASE_URL;
 
 const extractAuthorsFromGuardian = (
-  byline?: string,
+  author?: string,
   tags?: Array<{ id: string; type: string; webTitle: string }>
 ): string[] => {
   let authors: string[] = [];
 
-  if (byline) {
-    const cleanedByline = byline.replace(/^By\s+/i, '').trim();
-    if (cleanedByline && cleanedByline !== 'Guardian staff reporter') {
-      authors.push(cleanedByline);
+  if (author) {
+    const cleanedAuthor = author.replace(/^By\s+/i, '').trim(); 
+    if (cleanedAuthor && cleanedAuthor !== 'Guardian staff reporter') {
+      authors.push(cleanedAuthor);
     }
   }
 
@@ -47,7 +47,7 @@ export const fetchGuardianNews = async (
     response: {
       docs: data.response.results.map((article): Article => {
         const authors = extractAuthorsFromGuardian(
-          article.fields?.byline,
+          article.fields?.byline,  
           article.tags
         );
 

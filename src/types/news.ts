@@ -119,4 +119,10 @@ export interface NewsContextType {
   shuffledArticles: Article[];
   filteredArticles: Article[];
   availableAuthors: string[];
+
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  paginatedArticles: Article[];
+  totalPages: number;
+  itemsPerPage: number;
 }
