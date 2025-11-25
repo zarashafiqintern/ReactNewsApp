@@ -1,26 +1,10 @@
-import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
+import { useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 import { useQueries } from '@tanstack/react-query';
-import { fetchNews } from '../services/newsApi';
-import { fetchGuardianNews } from '../services/guardianApi';
-import { fetchWorldNews } from '../services/worldnewsApi';
 import { useShuffledArticles } from '../hooks/useShuffledArticles';
 import { filterArticles, extractAuthors } from '../utils';
 import type { NewsContextType, SourceFilterType, FiltersState } from '../types/news';
-
-const NewsContext = createContext<NewsContextType | undefined>(undefined);
-
-const NEWS_SOURCES = [
-  { key: 'news', queryKey: ['news'], fetchFn: fetchNews },
-  { key: 'guardian', queryKey: ['guardian-news'], fetchFn: fetchGuardianNews },
-  { key: 'worldNews', queryKey: ['world-news'], fetchFn: fetchWorldNews },
-];
-
-const INITIAL_FILTERS: FiltersState = {
-  sourceFilter: 'all',
-  dateFrom: '',
-  dateTo: '',
-  authorFilter: '',
-};
+import { INITIAL_FILTERS, NEWS_SOURCES, NewsContext } from './news.constants';
+import { useDebounce } from '../utils/debounce';
 
 interface NewsProviderProps {
   children: ReactNode;
@@ -28,19 +12,14 @@ interface NewsProviderProps {
 
 export function NewsProvider({ children }: NewsProviderProps) {
   const [searchQuery, setSearchQuery] = useState('Politics');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('Politics');
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   const [filters, setFilters] = useState<FiltersState>(INITIAL_FILTERS);
   const [showFilters, setShowFilters] = useState(false);
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3; 
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     setFilters((prev) => ({ ...prev, authorFilter: '' }));
@@ -60,7 +39,11 @@ export function NewsProvider({ children }: NewsProviderProps) {
   const [newsData, guardianData, worldNewsData] = results.map((r) => r.data);
   const isLoading = results.some((r) => r.isLoading);
 
-  const shuffledArticles = useShuffledArticles(newsData, guardianData, worldNewsData);
+  const shuffledArticles = useShuffledArticles(
+    newsData,
+    guardianData,
+    worldNewsData
+  );
 
   const filteredArticles = useMemo(() => {
     return filterArticles(
@@ -104,14 +87,15 @@ export function NewsProvider({ children }: NewsProviderProps) {
     setFilters(INITIAL_FILTERS);
   };
 
-  const hasActiveFilters = filters.sourceFilter !== 'all' ||
+  const hasActiveFilters =
+    filters.sourceFilter !== 'all' ||
     filters.dateFrom !== '' ||
     filters.dateTo !== '' ||
     filters.authorFilter !== '';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setDebouncedSearchQuery(searchQuery);
+    setSearchQuery(searchQuery);
   };
 
   const value: NewsContextType = {

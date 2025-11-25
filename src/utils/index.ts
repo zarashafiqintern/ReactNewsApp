@@ -31,7 +31,7 @@ export const getAuthorText = (author: string | string[] | undefined): string | n
   }
 
   return null;
-};
+};  
 
 export const filterAuthor = (author: string | string[] | undefined): string => {
   if (!author) return '';
@@ -103,14 +103,6 @@ export const extractAuthors = (
   return Array.from(authors).sort();
 };
 
-export const handleImageError = (
-  e: React.SyntheticEvent<HTMLImageElement, Event>,
-  defaultSrc: string
-): void => {
-  const target = e.target as HTMLImageElement;
-  target.src = defaultSrc;
-  target.alt = '_';
-};
 
 export const openInNewTab = (url: string): void => {
   window.open(url, '_blank', 'noopener,noreferrer');

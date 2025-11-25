@@ -92,6 +92,8 @@ export interface GuardianNewsResponse {
 export type SourceFilterType = 'all' | 'newsapi' | 'guardian' | 'worldnews';
 
 export interface FiltersState {
+  author: string | number | readonly string[] | undefined;
+  source: string | number | readonly string[] | undefined;
   sourceFilter: SourceFilterType;
   dateFrom: string;
   dateTo: string;

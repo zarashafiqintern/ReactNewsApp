@@ -17,7 +17,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
-    } 
+    }     
     else {
       if (currentPage <= 3) {
         for (let i = 1; i <= showPages; i++) {

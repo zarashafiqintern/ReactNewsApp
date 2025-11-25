@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
 import type { Article } from '../types/news';
-import { handleImageError, encodeId } from '../utils';
+import { encodeId } from '../utils';
 import news from '../assets/news.webp';
 
 interface NewsCardProps {
@@ -9,7 +9,6 @@ interface NewsCardProps {
 
 export const NewsCard = ({ article }: NewsCardProps) => {
   const navigate = useNavigate();
-  const imageUrl = article.thumbnail || news;
 
   const handleViewClick = () => {
     navigate(`/news/${encodeId(article.id)}`, { state: { article } });
@@ -25,10 +24,12 @@ export const NewsCard = ({ article }: NewsCardProps) => {
     >
       <div className="relative h-48 overflow-hidden shrink-0 group">
         <img
-          src={imageUrl}
+          src={article.thumbnail && article.thumbnail.trim() !== '' ? article.thumbnail : news}
           alt={article.title || 'No title'}
           className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110 bg-gray-100"
-          onError={(e) => handleImageError(e, news)}
+          onError={(e) => {
+            e.currentTarget.src = news; 
+          }}
         />
       </div>
 

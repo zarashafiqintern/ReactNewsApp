@@ -1,4 +1,3 @@
-import { X } from 'lucide-react';
 import { useNews } from '../context/NewsContext';
 import { NewsCard } from '../components/NewsCard';
 import { Filters } from '../components/Filters';
@@ -8,7 +7,6 @@ import { Pagination } from '../components/Pagination';
 function NewsPage() {
   const { 
     showFilters, 
-    setShowFilters, 
     isLoading, 
     paginatedArticles,
     totalPages,
@@ -18,7 +16,6 @@ function NewsPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -26,21 +23,8 @@ function NewsPage() {
       <Navbar />
 
       {showFilters && (
-        <div className="max-w-7xl mx-auto px-4 py-3 bg-white border-b border-gray-200 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-gray-800 text-sm tracking-wide">Filters</h3>
-            <button
-              onClick={() => setShowFilters(false)}
-              className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          <div className="space-y-3">
-            <Filters />
-          </div>
-        </div>
-      )}
+          <Filters />
+       )}
 
       <main className="max-w-7xl mx-auto px-4 py-6">
         {isLoading && paginatedArticles.length === 0 && (

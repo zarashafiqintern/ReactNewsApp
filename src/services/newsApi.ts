@@ -5,9 +5,9 @@ const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const BASE_URL = import.meta.env.VITE_NEWS_BASE_URL;
 
 export const fetchNews = async (query: string = 'technology'): Promise<NewsResponse> => {
-  const response = await fetch(
-    `${BASE_URL}?q=${query}&apiKey=${NEWS_API_KEY}&sortBy=publishedAt&pageSize=20`
-  );
+  const originalUrl = `${BASE_URL}?q=${query}&apiKey=${NEWS_API_KEY}&sortBy=publishedAt&pageSize=20`;
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`;
+  const response = await fetch(proxyUrl);
 
   if (!response.ok) {
     throw new Error(`NewsAPI Error: ${response.status} - ${response.statusText}`);
